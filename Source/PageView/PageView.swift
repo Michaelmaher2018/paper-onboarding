@@ -166,8 +166,17 @@ extension PageView {
         }
 
         let containerWidth = CGFloat(itemsCount + 1) * selectedItemRadius + space * CGFloat(itemsCount - 1)
-        let toValue = containerWidth / 2.0 - selectedItemRadius - (selectedItemRadius + space) * CGFloat(index)
-        containerX.constant = toValue
+
+        if #available(iOS 9.0, *) {
+            let isRTL = UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .rightToLeft
+            let sign: CGFloat = isRTL ? 1 : -1
+            let toValue = containerWidth / 2.0 + sign * (selectedItemRadius + (selectedItemRadius + space) * CGFloat(index))
+            containerX.constant = toValue
+
+        } else {
+            // Fallback on earlier versions
+        }
+        
 
         if animated == true {
             UIView.animate(withDuration: duration,

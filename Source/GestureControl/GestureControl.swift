@@ -55,6 +55,21 @@ public class GestureControl: UIView {
 extension GestureControl {
 
     @objc dynamic func swipeHandler(_ gesture: UISwipeGestureRecognizer) {
-        delegate.gestureControlDidSwipe(gesture.direction)
+        var direction = gesture.direction
+        if #available(iOS 9.0, *) {
+            let isRTL = UIView.userInterfaceLayoutDirection(for: gesture.view!.semanticContentAttribute) == .rightToLeft
+            // Flip direction only if in RTL interface
+            if (isRTL && direction == .right) {
+                direction = .left
+            } else if (isRTL && direction == .left) {
+                direction = .right
+            }
+
+            delegate.gestureControlDidSwipe(direction)
+
+        } else {
+            // Fallback on earlier versions
+        }
+
     }
 }
